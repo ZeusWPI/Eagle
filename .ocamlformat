@@ -1,4 +1,9 @@
 profile = default
+#  'conventional', 'default', 'ocamlformat' or 'janestreet'
+
 version = 0.22.4
 
-#  'conventional', 'default', 'ocamlformat' or 'janestreet'
+indent-after-in = 2
+
+function-indent = 2
+function-indent-nested = always
