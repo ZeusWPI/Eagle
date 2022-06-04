@@ -1,0 +1,4 @@
+(executable
+ (public_name eagle)
+ (name main)
+ (libraries Eagle lwt.unix))
