@@ -5,22 +5,23 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github zeuswpi/Eagle))
 
-(authors "Author Name")
+(authors "Maxime Bloch")
 
-(maintainers "Maintainer Name")
+(maintainers "Maxime Bloch")
 
-(license LICENSE)
+; (license MIT) TODO
 
 (documentation https://url/to/documentation)
 
 (package
  (name Eagle)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
- (tags
-  (topics "to describe" your project)))
+ ; (synopsis "A short synopsis")
+ ; (description "A longer description")
+ (depends ocaml dune lwt cohttp-lwt-unix cohttp-lwt-unix-ssl cohttp-async async-ssl yojson)
+ ; (tags
+ ;  (topics "to describe" your project))
+ )
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

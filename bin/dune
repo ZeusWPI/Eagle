@@ -1,4 +1,4 @@
 (executable
  (public_name eagle)
  (name main)
- (libraries Eagle lwt.unix))
+ (libraries Eagle lwt.unix cohttp cohttp-lwt-unix cohttp-async yojson))

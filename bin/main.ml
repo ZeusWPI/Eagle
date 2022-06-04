@@ -1,24 +1,30 @@
 open Lwt
 open Cohttp
 open Cohttp_lwt_unix
+(* open Yojson *)
 
 let available_commands = [ "tab"; "tap" ]
+let tab_parse_transactions body = Yojson.Safe.from_string body
 
 let tab_fetch_transactions =
-  Client.get (Uri.of_string "https://www.reddit.com/") >>= fun (resp, body) ->
+  Client.get (Uri.of_string "https://dummyjson.com/products/1")
+  >>= fun (resp, body) ->
   let code = resp |> Response.status |> Code.code_of_status in
   Printf.printf "Response code: %d\n" code;
   Printf.printf "Headers: %s\n" (resp |> Response.headers |> Header.to_string);
   body |> Cohttp_lwt.Body.to_string >|= fun body ->
   Printf.printf "Body of length: %d\n" (String.length body);
-  body
+  let json = tab_parse_transactions body in
+  Format.printf "Parsed to %a" Yojson.Safe.pp json;
+  "success"
 
 let command_tab () =
   print_endline " -- TAB --";
   match Sys.getenv_opt "TAB_TOKEN" with
   | Some tab_token ->
-      let body = Lwt_main.run body in
-      print_endline ("Received body\n" ^ body)
+      let res = Lwt_main.run tab_fetch_transactions in
+      print_endline ("Using TAB_TOKEN: " ^ tab_token);
+      print_endline res
   | None ->
       print_endline
         "No API token for tab found. Set the TAB_TOKEN environment variable to \
@@ -42,6 +48,7 @@ let rec loop () =
       process_command line;
       loop ()
   | None -> print_endline "Bye 👋"
+
 (* | None -> List.iter print_endline acc *)
 
 let () =
@@ -50,11 +57,8 @@ let () =
 
 (* print_endline "Hello, World!"
 
-   let quit_loop = ref false in
-     while not !quit_loop do
-       print_string "Have you had enough yet? (y/n) ";
-       let str = read_line () in
-         if str.[0] = 'y' then quit_loop := true
-     done;;
+   let quit_loop = ref false in while not !quit_loop do print_string "Have
+   you had enough yet? (y/n) "; let str = read_line () in if str.[0] = 'y'
+   then quit_loop := true done;;
 
    let () = quit_loop *)

@@ -37,3 +37,14 @@ _opam/
 # Extras
 
 .envrc
+
+
+# Nix specific setup
+
+nix/opam-selection.nix
+*~
+,*
+.*.swp
+.*.swo
+result
+result-*

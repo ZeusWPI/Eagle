@@ -1,2 +1,4 @@
 profile = default
 version = 0.22.4
+
+#  'conventional', 'default', 'ocamlformat' or 'janestreet'
