@@ -4,12 +4,12 @@ type api_endpoint = Profile
 
 let print_profile t =
   Ocolor_format.printf "@{<bold;ul>   Tab profile info@}\n";
-  let name = get_str "name" t in
-  let admin = get_bool "admin" t in
-  let orders_count = get_int "orders_count" t in
-  let is_private = get_bool "private" t in
-  let created_at = get_datetime "created_at" t in
-  let updated_at = get_datetime "updated_at" t in
+  let name = get_str "name" t
+  and admin = get_bool "admin" t
+  and orders_count = get_int "orders_count" t
+  and is_private = get_bool "private" t
+  and created_at = get_datetime "created_at" t
+  and updated_at = get_datetime "updated_at" t in
   Ocolor_format.printf "             Name : %s\n" name;
   Ocolor_format.printf "      Order count : %d\n" orders_count;
   Ocolor_format.printf
@@ -32,9 +32,7 @@ let get_tap_variables () =
   Some (tap_token, tap_user)
 
 let command_tap_profile () =
-  match get_tap_variables () with
-  | Some (tap_token, tap_user) -> (
-      match Lwt_main.run (fetch_api_tap Profile tap_token tap_user) with
-      | Some profile -> print_profile profile
-      | None -> ())
-  | None -> ()
+  let* tap_token, tap_user = get_tap_variables () in
+  let* profile = Lwt_main.run (fetch_api_tap Profile tap_token tap_user) in
+  print_profile profile;
+  None

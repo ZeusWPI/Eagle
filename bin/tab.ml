@@ -60,14 +60,11 @@ let command_tab_transactions () =
   let* transactions =
     Lwt_main.run (fetch_api_tap Transactions tab_token tab_user)
   in
-  let trans_list = transactions |> YojsonBU.to_list in
-  print_transactions trans_list tab_user;
+  print_transactions (transactions |> YojsonBU.to_list) tab_user;
   None
 
 let command_tab_profile () =
-  match get_tab_variables () with
-  | Some (tab_token, tab_user) -> (
-      match Lwt_main.run (fetch_api_tap Profile tab_token tab_user) with
-      | Some profile -> print_profile profile
-      | None -> ())
-  | None -> ()
+  let* tab_token, tab_user = get_tab_variables () in
+  let* profile = Lwt_main.run (fetch_api_tap Profile tab_token tab_user) in
+  print_profile profile;
+  None
