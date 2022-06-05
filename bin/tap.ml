@@ -27,20 +27,9 @@ let fetch_api_tap endpoint tap_token tap_user =
   Api.get_json ("https://tap.zeus.gent" ^ path) tap_token
 
 let get_tap_variables () =
-  match Sys.getenv_opt "TAP_TOKEN" with
-  | Some tap_token -> (
-      match Sys.getenv_opt "TAP_USER" with
-      | Some tap_user -> Some (tap_token, tap_user)
-      | None ->
-          print_endline
-            "No tap user found. Set the TAP_USER environment variable to use \
-             this feature.";
-          None)
-  | None ->
-      print_endline
-        "No API token for tap found. Set the TAP_TOKEN environment variable to \
-         use this feature.";
-      None
+  let* tap_token = get_env_opt_err "TAP_TOKEN" in
+  let* tap_user = get_env_opt_err "TAP_USER" in
+  Some (tap_token, tap_user)
 
 let command_tap_profile () =
   match get_tap_variables () with

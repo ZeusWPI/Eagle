@@ -51,20 +51,9 @@ let fetch_api_tap endpoint tab_token tab_user =
   Api.get_json ("https://tab.zeus.gent/api/v1" ^ path) tab_token
 
 let get_tab_variables () =
-  match Sys.getenv_opt "TAB_TOKEN" with
-  | Some tab_token -> (
-      match Sys.getenv_opt "TAB_USER" with
-      | Some tab_user -> Some (tab_token, tab_user)
-      | None ->
-          print_endline
-            "No tap user found. Set the TAB_USER environment variable to use \
-             this feature.";
-          None)
-  | None ->
-      print_endline
-        "No API token for tab found. Set the TAB_TOKEN environment variable to \
-         use this feature.";
-      None
+  let* tab_token = get_env_opt_err "TAB_TOKEN" in
+  let* tab_user = get_env_opt_err "TAB_USER" in
+  Some (tab_token, tab_user)
 
 let command_tab_transactions () =
   match get_tab_variables () with

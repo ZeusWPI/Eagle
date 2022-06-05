@@ -6,6 +6,9 @@ module YojsonB = Yojson.Basic
 module YojsonBU = Yojson.Basic.Util
 open Utils
 
+(* Monad binding onto let* specifically for Lwt *)
+let ( let* ) = Lwt.bind
+
 let get_json url token =
   print_endline "Fetching data from api";
   let headers =

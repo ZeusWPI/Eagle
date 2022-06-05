@@ -3,8 +3,40 @@ module YojsonB = Yojson.Basic
 module YojsonBU = Yojson.Basic.Util
 module CalendarPrinter = CalendarLib.Printer.Calendar
 
-(* Monad binding onto let *)
-let ( let* ) = Lwt.bind
+(* Monad tooling to handle Optionals with error messages
+
+   Example usage:
+
+     let some_func () =
+     let* var1 =
+       with_error
+         optional_1
+         "Ohno optional_1 has failed :o"
+     in
+     let* var2 =
+       with_error
+         optional_2
+         "Ohno optional_2 has failed :o :o"
+     in
+     Some (var 1, var 2)
+*)
+
+let ( let* ) o f = match o with None -> None | Some x -> f x
+
+let with_error opt err =
+  match opt with
+  | Some value -> Some value
+  | None ->
+      print_endline err;
+      None
+
+let get_env_opt_err key =
+  with_error (Sys.getenv_opt key)
+    ("Config variable '" ^ key
+   ^ "' not found. Set it as environment variable or save it in the config to \
+      use this feature.")
+
+(* List utils *)
 
 let slice list i k =
   let rec take n = function
@@ -16,6 +48,8 @@ let slice list i k =
     | _h :: t as l -> if n = 0 then l else drop (n - 1) t
   in
   take (k - i + 1) (drop i list)
+
+(* Yojson shorthands to get typed members from a json object *)
 
 let get_json_member_str name jt =
   jt |> YojsonBU.member name |> YojsonBU.to_string
