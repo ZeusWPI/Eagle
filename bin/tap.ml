@@ -33,6 +33,6 @@ let get_tap_variables () =
 
 let command_tap_profile () =
   let* tap_token, tap_user = get_tap_variables () in
-  let* profile = Lwt_main.run (fetch_api_tap Profile tap_token tap_user) in
+  let* profile = fetch_api_tap Profile tap_token tap_user in
   print_profile profile;
   None
