@@ -62,6 +62,9 @@ You can get started in nix by running
 - Running
         
         dune exec eagle
-- Building
+- Building: Builds the tool in the `_build` folder.
         
         dune build
+- Installing: This installs the tool so it's globally available.
+
+        dune build @install
