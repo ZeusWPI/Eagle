@@ -19,7 +19,7 @@
  (name Eagle)
  ; (synopsis "A short synopsis")
  ; (description "A longer description")
- (depends ocaml dune lwt cohttp-lwt-unix cohttp-lwt-unix-ssl cohttp-async async-ssl yojson ocolor calendar)
+ (depends ocaml dune lwt cohttp-lwt-unix cohttp-lwt-unix-ssl yojson ocolor calendar)
  ; (tags
  ;  (topics "to describe" your project))
  )

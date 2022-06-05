@@ -11,8 +11,6 @@ depends: [
   "lwt"
   "cohttp-lwt-unix"
   "cohttp-lwt-unix-ssl"
-  "cohttp-async"
-  "async-ssl"
   "yojson"
   "ocolor"
   "calendar"
