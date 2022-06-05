@@ -7,6 +7,9 @@ shell: nix/opam-selection.nix
 nix/opam-selection.nix: Makefile nix/default.nix default.nix Eagle.opam
 	nix-shell -A resolve default.nix
 
+install:
+	dune build @install
+
 make-deps-graph:
 	dune-deps | tred | dot -Tpng > deps.png
 

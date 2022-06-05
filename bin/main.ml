@@ -1,43 +1,19 @@
-open Lwt
-open Cohttp
-open Cohttp_lwt_unix
-(* open Yojson *)
+let available_commands = [ "tab t (transactions)"; "tab p (profile + balance)" ]
 
-let available_commands = [ "tab"; "tap" ]
-let tab_parse_transactions body = Yojson.Safe.from_string body
-
-let tab_fetch_transactions =
-  Client.get (Uri.of_string "https://tab.zeus.gent/transactions")
-  >>= fun (resp, body) ->
-  let code = resp |> Response.status |> Code.code_of_status in
-  Printf.printf "Response code: %d\n" code;
-  Printf.printf "Headers: %s\n" (resp |> Response.headers |> Header.to_string);
-  body |> Cohttp_lwt.Body.to_string >|= fun body ->
-  Printf.printf "Body of length: %d\n" (String.length body);
-  let json = tab_parse_transactions body in
-  Format.printf "Parsed to %a" Yojson.Safe.pp json;
-  "success"
-
-let command_tab () =
-  print_endline " -- TAB --";
-  match Sys.getenv_opt "TAB_TOKEN" with
-  | Some tab_token ->
-      let res = Lwt_main.run tab_fetch_transactions in
-      print_endline ("Using TAB_TOKEN: " ^ tab_token);
-      print_endline res
-  | None ->
-      print_endline
-        "No API token for tab found. Set the TAB_TOKEN environment variable to \
-         use this feature."
-
-let command_not_found () =
-  print_endline "Err! Command not found";
+let print_possible_actions () =
   print_endline "Available commands: ";
   print_string " - ";
   print_endline (String.concat "\n - " available_commands)
 
+let command_not_found () =
+  print_endline "Err! Command not found";
+  print_endline "";
+  print_possible_actions ()
+
 let process_command line =
-  if line = "tab" then command_tab () else command_not_found ()
+  if line = "tab t" then Tab.command_tab_transactions ()
+  else if line = "tab p" then Tab.command_tab_profile ()
+  else command_not_found ()
 
 let maybe_read_line () = try Some (read_line ()) with End_of_file -> None
 
@@ -45,20 +21,12 @@ let rec loop () =
   print_string "> ";
   match maybe_read_line () with
   | Some line ->
+      print_endline "";
       process_command line;
       loop ()
   | None -> print_endline "Bye 👋"
 
-(* | None -> List.iter print_endline acc *)
-
 let () =
   print_endline "Welcome to Eagle. The goto CLI tool for all your Zeus needs.";
+  print_possible_actions ();
   loop ()
-
-(* print_endline "Hello, World!"
-
-   let quit_loop = ref false in while not !quit_loop do print_string "Have
-   you had enough yet? (y/n) "; let str = read_line () in if str.[0] = 'y'
-   then quit_loop := true done;;
-
-   let () = quit_loop *)
