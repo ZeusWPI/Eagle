@@ -2,6 +2,8 @@
 
 > The Eagle of Zeus (Ancient Greek: ἀετός Διός, romanized: aetos Dios) was one of the chief attributes and personifications of Zeus, the head of the Olympian pantheon.
 
+The must have tool for every Zeus'er. Everything at your fingertips only limited by the speed of your command line.
+
 ## Features
 - List last 10 tab transactions
 - View tab profile, mostly for your balance.
