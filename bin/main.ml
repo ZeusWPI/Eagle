@@ -33,6 +33,7 @@ let rec loop () =
   | None -> print_endline "Bye 👋"
 
 let () =
+  Config.load_config ();
   print_endline "Welcome to Eagle. The goto CLI tool for all your Zeus needs.";
   print_possible_actions ();
   loop ()
