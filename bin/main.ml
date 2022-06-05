@@ -1,4 +1,9 @@
-let available_commands = [ "tab t (transactions)"; "tab p (profile + balance)" ]
+let available_commands =
+  [
+    "tab t | List last 10 Tab transactions";
+    "tab p | Show Tab profile with balance";
+    "tap p | Show Tap profile";
+  ]
 
 let print_possible_actions () =
   print_endline "Available commands: ";
@@ -13,6 +18,7 @@ let command_not_found () =
 let process_command line =
   if line = "tab t" then Tab.command_tab_transactions ()
   else if line = "tab p" then Tab.command_tab_profile ()
+  else if line = "tap p" then Tap.command_tap_profile ()
   else command_not_found ()
 
 let maybe_read_line () = try Some (read_line ()) with End_of_file -> None

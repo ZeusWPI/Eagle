@@ -1,6 +1,7 @@
 module YojsonS = Yojson.Safe
 module YojsonB = Yojson.Basic
 module YojsonBU = Yojson.Basic.Util
+module CalendarPrinter = CalendarLib.Printer.Calendar
 
 (* Monad binding onto let *)
 let ( let* ) = Lwt.bind
@@ -31,6 +32,8 @@ let get_json_member_bool name jt =
   jt |> YojsonBU.member name |> YojsonBU.to_bool
 
 let get_bool = get_json_member_bool
+let get_json_member_int name jt = jt |> YojsonBU.member name |> YojsonBU.to_int
+let get_int = get_json_member_int
 
 let get_json_member_datetime name jt =
   get_json_member_str name jt

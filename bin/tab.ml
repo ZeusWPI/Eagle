@@ -1,10 +1,3 @@
-open Lwt
-open Cohttp
-open Cohttp_lwt_unix
-module YojsonS = Yojson.Safe
-module YojsonB = Yojson.Basic
-module YojsonBU = Yojson.Basic.Util
-module CalendarPrinter = CalendarLib.Printer.Calendar
 open Utils
 
 let print_transactions ts tab_user =
@@ -49,37 +42,13 @@ let print_profile t =
 
 type api_endpoint = Transactions | Profile
 
-let tab_fetch_api endpoint tab_token tab_user =
-  print_endline "Fetching data from api";
-  let headers =
-    [
-      ("Accept", "application/json");
-      ("Authorization", "Token token=" ^ tab_token);
-    ]
-  in
+let fetch_api_tap endpoint tab_token tab_user =
   let path =
     match endpoint with
     | Transactions -> "/users/" ^ tab_user ^ "/transactions"
     | Profile -> "/users/" ^ tab_user
   in
-
-  Client.get ~headers:(Header.of_list headers)
-    (Uri.of_string ("https://tab.zeus.gent/api/v1" ^ path))
-  >>= fun (resp, body) ->
-  let code = resp |> Response.status |> Code.code_of_status in
-  (* 
-   * Printf.printf "Response code: %d\n" code;
-   * Printf.printf "Headers: %s\n" (resp |> Response.headers |> Header.to_string);
-   * *)
-  let json =
-    if code = 200 then
-      let* body_str = Cohttp_lwt.Body.to_string body in
-      Lwt.return @@ YojsonB.from_string body_str
-    else
-      let () = Printf.printf "Download of transactions.json failed." in
-      Lwt.return @@ YojsonB.from_string "{'message': 'Error fetching data'}"
-  in
-  json
+  Api.get_json ("https://tab.zeus.gent/api/v1" ^ path) tab_token
 
 let get_tab_variables () =
   match Sys.getenv_opt "TAB_TOKEN" with
@@ -99,18 +68,18 @@ let get_tab_variables () =
 
 let command_tab_transactions () =
   match get_tab_variables () with
-  | Some (tab_token, tab_user) ->
-      let transactions =
-        Lwt_main.run (tab_fetch_api Transactions tab_token tab_user)
-      in
-      let trans_list = transactions |> YojsonBU.to_list in
-      print_transactions trans_list tab_user
-      (* last10 |> List.map YojsonB.pretty_to_string |> List.iter print_endline *)
+  | Some (tab_token, tab_user) -> (
+      match Lwt_main.run (fetch_api_tap Transactions tab_token tab_user) with
+      | Some transactions ->
+          let trans_list = transactions |> YojsonBU.to_list in
+          print_transactions trans_list tab_user
+      | None -> ())
   | None -> ()
 
 let command_tab_profile () =
   match get_tab_variables () with
-  | Some (tab_token, tab_user) ->
-      let profile = Lwt_main.run (tab_fetch_api Profile tab_token tab_user) in
-      print_profile profile
+  | Some (tab_token, tab_user) -> (
+      match Lwt_main.run (fetch_api_tap Profile tab_token tab_user) with
+      | Some profile -> print_profile profile
+      | None -> ())
   | None -> ()
