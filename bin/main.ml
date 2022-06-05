@@ -16,9 +16,9 @@ let command_not_found () =
   print_possible_actions ()
 
 let process_command line =
-  if line = "tab t" then Tab.command_tab_transactions ()
-  else if line = "tab p" then Tab.command_tab_profile ()
-  else if line = "tap p" then Tap.command_tap_profile ()
+  if line = "tab t" then ignore @@ Tab.command_tab_transactions ()
+  else if line = "tab p" then ignore @@ Tab.command_tab_profile ()
+  else if line = "tap p" then ignore @@ Tap.command_tap_profile ()
   else command_not_found ()
 
 let maybe_read_line () = try Some (read_line ()) with End_of_file -> None

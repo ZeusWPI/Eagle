@@ -7,12 +7,12 @@ let print_transactions ts tab_user =
   Format.print_cut ();
   List.iter
     (fun t ->
-      let debtor = get_str "debtor" t in
-      let creditor = get_str "creditor" t in
-      let issuer = get_str "issuer" t in
-      let amount = get_currency "amount" t in
-      let message = get_str "message" t in
-      let time = get_datetime "time" t in
+      let debtor = get_str "debtor" t
+      and creditor = get_str "creditor" t
+      and issuer = get_str "issuer" t
+      and amount = get_currency "amount" t
+      and message = get_str "message" t
+      and time = get_datetime "time" t in
       let color = if debtor = tab_user then "red" else "green" in
       Ocolor_format.printf
         "%8s sent @{<%s>€ %5.2f@} from %8s to %8s on the %s, saying: %s@,"
@@ -25,11 +25,11 @@ let print_transactions ts tab_user =
 
 let print_profile t =
   Ocolor_format.printf "@{<bold;ul>   Tab profile info@}\n";
-  let name = get_str "name" t in
-  let penning = get_bool "penning" t in
-  let balance = get_currency "balance" t in
-  let created_at = get_datetime "created_at" t in
-  let updated_at = get_datetime "updated_at" t in
+  let name = get_str "name" t
+  and penning = get_bool "penning" t
+  and balance = get_currency "balance" t
+  and created_at = get_datetime "created_at" t
+  and updated_at = get_datetime "updated_at" t in
   let color = if balance < 0. then "red" else "green" in
   Ocolor_format.printf "        Name : %s\n" name;
   Ocolor_format.printf "     Balance : @{<%s>€ %.2f@}\n" color balance;
@@ -56,14 +56,13 @@ let get_tab_variables () =
   Some (tab_token, tab_user)
 
 let command_tab_transactions () =
-  match get_tab_variables () with
-  | Some (tab_token, tab_user) -> (
-      match Lwt_main.run (fetch_api_tap Transactions tab_token tab_user) with
-      | Some transactions ->
-          let trans_list = transactions |> YojsonBU.to_list in
-          print_transactions trans_list tab_user
-      | None -> ())
-  | None -> ()
+  let* tab_token, tab_user = get_tab_variables () in
+  let* transactions =
+    Lwt_main.run (fetch_api_tap Transactions tab_token tab_user)
+  in
+  let trans_list = transactions |> YojsonBU.to_list in
+  print_transactions trans_list tab_user;
+  None
 
 let command_tab_profile () =
   match get_tab_variables () with
